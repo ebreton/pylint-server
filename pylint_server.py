@@ -39,10 +39,19 @@ blueprint = Blueprint('main', __name__)
 
 
 @blueprint.route('/<user>/<repo>.svg', methods=['GET'])
-def handle_get(user, repo):
-    slug_branch = user + '/' + repo + '/' + request.args.get('branch', '')
+def handle_get_by_repo(user, repo):
+    slug_branch = user + '/' + repo + '/' + request.args.get('branch', 'master')
     db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
     badge = db['badges'].find_one({"_id": slug_branch})
+    response = make_response(badge['svg'])
+    response.content_type = 'image/svg+xml'
+    return response
+
+
+@blueprint.route('/<generic_id>.svg', methods=['GET'])
+def handle_get_by_id(generic_id):
+    db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
+    badge = db['badges'].find_one({"_id": generic_id})
     response = make_response(badge['svg'])
     response.content_type = 'image/svg+xml'
     return response
