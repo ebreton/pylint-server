@@ -1,16 +1,12 @@
 pylint-server
 ====
-[![Build Status](https://travis-ci.org/drivet/pylint-server.svg?branch=master)](https://travis-ci.org/drivet/pylint-server)
-[![Coverage Status](https://coveralls.io/repos/drivet/pylint-server/badge.svg?branch=master)](https://coveralls.io/r/drivet/pylint-server?branch=master)
-[![Code Climate](https://codeclimate.com/github/drivet/pylint-server/badges/gpa.svg)](https://codeclimate.com/github/drivet/pylint-server)
-[![Pylint Rating](https://pylint.desmondrivet.com/drivet/pylint-server/rating.svg)](https://pylint.desmondrivet.com/drivet/pylint-server/report.html)
 
-A small Flask application to keep keep track of pylint reports and ratings
-on a per-repository basis.
+A small Flask application to receive and store a badge for your pylint
+reports.
 
 ## Requirements
 
-The two main requirements are Flask and Travis.  No other build server ios
+The two main requirements are Flask and Travis.  No other build server are
 supported at the moment.
 
 ## Deployment and Usage
@@ -29,20 +25,12 @@ In your after_success section, put something like this:
 
 <pre>
 after_success:
-  - pylint --output-format=html pylint_server > /tmp/pylint-report.html
-  - curl -v -m 120 -X POST -F travis-job-id=$TRAVIS_JOB_ID -F pylint-report=@/tmp/pylint-report.html https://pylint.whatever.com/reports
+  - pylint YOUR_PACKAGE > /tmp/pylint-report.html
+  - curl -v -m 120 -X POST -F travis-job-id=$TRAVIS_JOB_ID -F pylint-report=@/tmp/pylint-report.html https://pylint-server.herokuapp.com/travis
 </pre>
 
-Assuming you're using github, the app will deposit the report under:
+You can find your badge under:
 
 <pre>
-/githubuser/repo/report.html
+/githubuser/repo?branch=branch
 </pre>
-
-And a colour coded pylint rating image under:
-
-<pre>
-/githubuser/repo/rating.svg
-</pre>
-
-Put a badge on your README accordingly.
