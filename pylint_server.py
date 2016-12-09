@@ -27,8 +27,8 @@ BADGE_TEMPLATE = """<svg xmlns="http://www.w3.org/2000/svg" width="85" height="2
   <g fill="#fff" text-anchor="middle"
                  font-family="DejaVu Sans,Verdana,Geneva,sans-serif"
                  font-size="11">
-    <text x="25" y="15" fill="#010101" fill-opacity=".3">pylint</text>
-    <text x="25" y="14">pylint</text>
+    <text x="25" y="15" fill="#010101" fill-opacity=".3">lint</text>
+    <text x="25" y="14">lint</text>
     <text x="67" y="15" fill="#010101" fill-opacity=".3">{0:.2f}</text>
     <text x="67" y="14">{0:.2f}</text>
   </g>
@@ -46,12 +46,25 @@ def handle_get(user, repo):
     return saved['svg'], 200
 
 
-@blueprint.route('/reports', methods=['POST'])
-def handle_report_post():
-    current_app.logger.info('handling POST on /reports')
+@blueprint.route('/travis', methods=['POST'])
+def handle_travis_report():
     travis_job_id = int(request.form['travis-job-id'])
-    slug_branch = get_slug_branch(travis_job_id)
+    travis = TravisPy.github_auth(os.environ["GITHUB_TOKEN"])
+    log = travis.job(travis_job_id).log.body
+    branch, slug = re.search("git clone .* --branch=(.*) https://github.com/(.*).git", log).groups()
     report = request.files['pylint-report'].read()
+    handle(slug + '/' + branch, report)
+
+
+@blueprint.route('/report/<generic_id>', methods=['POST'])
+def handle_report(generic_id):
+    if '/' in generic_id:
+        raise ValueError("Backslash character is not allowed. Could overwrite real repositories.")
+    report = request.files['pylint-report'].read()
+    handle(generic_id, report)
+
+
+def handle(slug_branch, report):
     rating, colour = get_rating_and_colour(report)
 
     db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
@@ -83,13 +96,6 @@ def get_rating_and_colour(report):
         else:
             colour = '9d9d9d'
     return rating, colour
-
-
-def get_slug_branch(travis_job_id):
-    travis = TravisPy.github_auth(os.environ["GITHUB_TOKEN"])
-    log = travis.job(travis_job_id).log.body
-    branch, slug = re.search("git clone .* --branch=(.*) https://github.com/(.*).git", log).groups()
-    return slug + '/' + branch
 
 
 def create_app():
