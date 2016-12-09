@@ -40,7 +40,7 @@ blueprint = Blueprint('main', __name__)
 
 @blueprint.route('/<user>/<repo>.svg', methods=['GET'])
 def handle_get(user, repo):
-    slug_branch = user + '/' + repo + '/' + request.args.get('branch', 'master')
+    slug_branch = user + '/' + repo + '/' + request.args.get('branch', '')
     db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
     badge = db['badges'].find_one({"_id": slug_branch})
     response = make_response(badge['svg'])
