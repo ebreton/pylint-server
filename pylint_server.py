@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from flask import Flask, request, Blueprint, current_app
+from flask import Flask, request, Blueprint, make_response
 import os
 import re
 from pymongo import MongoClient
@@ -42,8 +42,10 @@ blueprint = Blueprint('main', __name__)
 def handle_get(user, repo):
     slug_branch = user + '/' + repo + '/' + request.args.get('branch', 'master')
     db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
-    saved = db['badges'].find_one({"_id": slug_branch})
-    return saved['svg'], 200
+    badge = db['badges'].find_one({"_id": slug_branch})
+    response = make_response(badge['svg'])
+    response.content_type = 'image/svg+xml'
+    return response
 
 
 @blueprint.route('/travis', methods=['POST'])
