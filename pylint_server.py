@@ -110,6 +110,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(__name__)
     app.config['PROPAGATE_EXCEPTIONS'] = True
-    app.logger.setLevel(app.config['LOG_LEVEL'])
+    app.logger.setLevel(0)
     app.register_blueprint(mainbp)
     return app
