@@ -59,7 +59,7 @@ def handle_report_post():
         save_file(output_report, report)
 
         (rating, colour) = get_rating_and_colour(report)
-        output_badge = os.path.join(output_folder, slug, 'rating.svg')
+        output_badge = os.path.join(output_folder, slug, 'badge.svg')
         current_app.logger.info('saving badge to '+output_badge)
         save_file(output_badge, BADGE_TEMPLATE.format(rating, colour))
         return 'OK\n', 200
