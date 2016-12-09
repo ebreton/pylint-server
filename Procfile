@@ -1,0 +1,1 @@
+web: gunicorn pylint_server:create_app\(\)
