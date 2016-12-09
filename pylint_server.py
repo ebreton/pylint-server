@@ -41,7 +41,7 @@ blueprint = Blueprint('main', __name__)
 @blueprint.route('/<user>/<repo>', methods=['GET'])
 def handle_get(user, repo):
     slug_branch = user + '/' + repo + '/' + request.args.get('branch', 'master')
-    db = MongoClient(os.environ['MONGO_URI']).get_default_database()
+    db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
     saved = db['badges'].find_one({"_id": slug_branch})
     return saved['svg'], 200
 
@@ -54,7 +54,7 @@ def handle_report_post():
     report = request.files['pylint-report'].read()
     rating, colour = get_rating_and_colour(report)
 
-    db = MongoClient(os.environ['MONGO_URI']).get_default_database()
+    db = MongoClient(os.environ['MONGODB_URI']).get_default_database()
     db['badges'].update_one(
         {
             "_id": slug_branch
