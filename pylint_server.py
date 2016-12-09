@@ -55,7 +55,7 @@ def handle_travis_report():
     log = travis.job(travis_job_id).log.body
     branch, slug = re.search("git clone .* --branch=(.*) https://github.com/(.*).git", log).groups()
     report = request.files['pylint-report'].read()
-    handle(slug + '/' + branch, report)
+    return handle(slug + '/' + branch, report)
 
 
 @blueprint.route('/report/<generic_id>', methods=['POST'])
@@ -63,7 +63,7 @@ def handle_report(generic_id):
     if '/' in generic_id:
         raise ValueError("Backslash character is not allowed. Could overwrite real repositories.")
     report = request.files['pylint-report'].read()
-    handle(generic_id, report)
+    return handle(generic_id, report)
 
 
 def handle(slug_branch, report):
