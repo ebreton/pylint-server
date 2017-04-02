@@ -109,17 +109,17 @@ def get_rating_and_colour(report):
     return rating, colour
 
 
-def create_app():
+def create_app(log_level=LOG_LEVEL):
     app = Flask(__name__)
     app.config['PROPAGATE_EXCEPTIONS'] = True
-    app.logger.setLevel(LOG_LEVEL)
+    app.logger.setLevel(log_level)
     app.config.from_object(__name__)
     app.register_blueprint(blueprint)
     return app
 
 
 def main():
-    app = create_app()
+    app = create_app(log_level=logging.DEBUG)
     app.run()
 
 if __name__ == "__main__":
