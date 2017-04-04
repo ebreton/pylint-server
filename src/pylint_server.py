@@ -40,7 +40,8 @@ blueprint = Blueprint('main', __name__)
 
 @blueprint.route('/', methods=['GET'])
 def handle_home():
-    return make_response("pylint-server running...")
+    token_set = bool(os.environ.get("GITHUB_TOKEN", False))
+    return make_response("pylint-server running. GITHUB_TOKEN %s"% (token_set and "set" or "NOT set")
 
 @blueprint.route('/<user>/<repo>.svg', methods=['GET'])
 def handle_get_by_repo(user, repo):
