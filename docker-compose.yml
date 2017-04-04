@@ -1,0 +1,22 @@
+version: '2'
+services:
+  linter:
+    image: ebreton/pylint-server
+    container_name: linter
+    command: python pylint_server.py
+    environment:
+      - GITHUB_TOKEN
+    volumes:
+      - ./src:/app/src
+    expose:
+      - 5000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=5000"
+      - "traefik.backend=linter"
+      - "traefik.frontend.rule=Host:${LINTER_DOMAIN}"
+
+networks:
+  default:
+    external:
+      name: proxy
