@@ -1,1 +1,9 @@
--e .
+Flask
+gunicorn
+itsdangerous
+Jinja2
+MarkupSafe
+requests
+TravisPy
+Werkzeug
+pymongo
