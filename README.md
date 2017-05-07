@@ -9,6 +9,10 @@ reports.
 The two main requirements are Flask and Travis.  No other build server are
 supported at the moment.
 
+Two variable environments are expected:
+- GITHUB_TOKEN, with the name of the github repo connected to Travis
+- MONGODB_URI, with the connection string to MongoDB
+
 ## Deployment and Usage
 
 This application configures a POST route on /reports.  This endpoint accepts
